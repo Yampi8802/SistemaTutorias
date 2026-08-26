@@ -5,14 +5,14 @@ using SistemaTutoria.Servicios;
 var estudiante = new Estudiante
 {
     Id = 1,
-    Nombre = "Juan Pérez",
-    Correo = "juan@email.com"
+    Nombre = "Jean Orozco",
+    Correo = "jean@email.com"
 };
 
 var docente = new Docente
 {
     Id = 1,
-    Nombre = "Pedro García",
+    Nombre = "Francisco Cevallos",
     Especialidad = "Programación"
 };
 

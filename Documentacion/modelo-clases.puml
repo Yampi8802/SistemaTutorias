@@ -64,7 +64,5 @@ Notificador ..|> INotificador
 ServicioReservas --> Reserva
 ServicioReservas --> INotificador
 
-Administrador --> Estudiante
-Administrador --> Docente
 
 @enduml
