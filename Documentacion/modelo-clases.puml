@@ -1,0 +1,70 @@
+@startuml
+
+class Administrador {
+    +Id : int
+    +Nombre : string
+}
+
+class Estudiante {
+    +Id : int
+    +Nombre : string
+    +Correo : string
+}
+
+class Docente {
+    +Id : int
+    +Nombre : string
+    +Especialidad : string
+}
+
+class Tutoria {
+    +Id : int
+    +Tema : string
+    +Descripcion : string
+}
+
+class HorarioTutoria {
+    +Id : int
+    +Fecha : DateTime
+    +HoraInicio : TimeSpan
+    +HoraFin : TimeSpan
+    +Disponible : bool
+}
+
+class Reserva {
+    +Id : int
+    +Estudiante : Estudiante
+    +Docente : Docente
+    +Tutoria : Tutoria
+    +Horario : HorarioTutoria
+    +Estado : string
+}
+
+interface INotificador {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class Notificador {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class ServicioReservas {
+    -_notificador : INotificador
+    +ServicioReservas(notificador : INotificador)
+    +CrearReserva(reserva : Reserva)
+}
+
+Reserva "1" --> "1" Estudiante
+Reserva "1" --> "1" Docente
+Reserva "1" --> "1" Tutoria
+Reserva "1" --> "1" HorarioTutoria
+
+Notificador ..|> INotificador
+
+ServicioReservas --> Reserva
+ServicioReservas --> INotificador
+
+Administrador --> Estudiante
+Administrador --> Docente
+
+@enduml
