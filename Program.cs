@@ -1,6 +1,7 @@
 ﻿using SistemaTutoria.Dominio;
 using SistemaTutoria.Notificaciones;
 using SistemaTutoria.Servicios;
+using SistemaTutoria.Patrones.Factory;
 
 var estudiante = new Estudiante
 {
@@ -47,3 +48,22 @@ var servicioReservas = new ServicioReservas(notificador);
 servicioReservas.CrearReserva(reserva);
 
 Console.WriteLine($"Estado de la reserva: {reserva.Estado}");
+Console.WriteLine("\n=== PRUEBA FACTORY METHOD ===");
+
+NotificacionCreator emailCreator = new EmailCreator();
+emailCreator.EnviarNotificacion(
+    estudiante.Correo,
+    "Su tutoría ha sido confirmada."
+);
+
+NotificacionCreator smsCreator = new SmsCreator();
+smsCreator.EnviarNotificacion(
+    "0999999999",
+    "Su tutoría ha sido confirmada."
+);
+
+NotificacionCreator whatsappCreator = new WhatsAppCreator();
+whatsappCreator.EnviarNotificacion(
+    "0999999999",
+    "Su tutoría ha sido confirmada."
+);
