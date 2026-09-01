@@ -2,6 +2,7 @@
 using SistemaTutoria.Notificaciones;
 using SistemaTutoria.Servicios;
 using SistemaTutoria.Patrones.Factory;
+using SistemaTutoria.Patrones.Builder;
 
 var estudiante = new Estudiante
 {
@@ -72,3 +73,36 @@ telegramCreator.EnviarNotificacion(
     "usuario_telegram",
     "Su tutoría ha sido confirmada."
 );
+Console.WriteLine("\n=== PRUEBA BUILDER ===");
+
+var reservaBuilder = new ReservaBuilder();
+
+var reservaBuilder1 = reservaBuilder
+    .ConId(2)
+    .ConEstudiante(estudiante)
+    .ConDocente(docente)
+    .ConTutoria(tutoria)
+    .ConHorario(horario)
+    .Build();
+
+Console.WriteLine($"Reserva creada con Builder. Id: {reservaBuilder1.Id}");
+Console.WriteLine($"Estado: {reservaBuilder1.Estado}");
+var reservaBuilder2 = new ReservaBuilder()
+    .ConEstudiante(estudiante)
+    .ConDocente(docente)
+    .ConTutoria(tutoria)
+    .ConHorario(horario)
+    .Build();
+
+Console.WriteLine($"Segunda reserva creada con Builder. Id: {reservaBuilder2.Id}");
+Console.WriteLine($"Estado: {reservaBuilder2.Estado}");
+try
+{
+    var reservaInvalida = new ReservaBuilder()
+        .ConEstudiante(estudiante)
+        .Build();
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Validación: {ex.Message}");
+}
