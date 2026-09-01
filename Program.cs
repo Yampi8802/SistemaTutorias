@@ -67,3 +67,8 @@ whatsappCreator.EnviarNotificacion(
     "0999999999",
     "Su tutoría ha sido confirmada."
 );
+NotificacionCreator telegramCreator = new TelegramCreator();
+telegramCreator.EnviarNotificacion(
+    "usuario_telegram",
+    "Su tutoría ha sido confirmada."
+);
