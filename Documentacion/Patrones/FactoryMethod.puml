@@ -1,0 +1,61 @@
+@startuml
+title Factory Method - Sistema de Tutorías
+
+interface Notificacion {
+    +Enviar(destinatario : string, mensaje : string) : void
+}
+
+class NotificacionEmail {
+    +Enviar(destinatario: string, mensaje: string)
+}
+
+class NotificacionSMS {
+    +Enviar(destinatario: string, mensaje: string)
+}
+
+class NotificacionWhatsApp {
+    +Enviar(destinatario: string, mensaje: string)
+}
+
+class NotificacionTelegram {
+    +Enviar(destinatario: string, mensaje: string)
+}
+
+abstract class NotificacionCreator {
+    +CrearNotificacion() : Notificacion
+    +EnviarNotificacion(destinatario: string, mensaje: string)
+}
+
+class EmailCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class SmsCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class WhatsAppCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class TelegramCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+Notificacion <|-- NotificacionEmail
+Notificacion <|-- NotificacionSMS
+Notificacion <|-- NotificacionWhatsApp
+Notificacion <|-- NotificacionTelegram
+
+NotificacionCreator <|-- EmailCreator
+NotificacionCreator <|-- SmsCreator
+NotificacionCreator <|-- WhatsAppCreator
+NotificacionCreator <|-- TelegramCreator
+
+NotificacionCreator ..> Notificacion
+EmailCreator --> NotificacionEmail
+SmsCreator --> NotificacionSMS
+WhatsAppCreator --> NotificacionWhatsApp
+TelegramCreator --> NotificacionTelegram
+
+@enduml

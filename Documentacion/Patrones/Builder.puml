@@ -1,0 +1,46 @@
+@startuml
+title Builder - Sistema de Tutorías
+
+class Reserva {
+    +Id : int
+    +Estudiante : Estudiante
+    +Docente : Docente
+    +Tutoria : Tutoria
+    +Horario : HorarioTutoria
+    +Estado : string
+}
+
+class ReservaBuilder {
+    -_id : int
+    -_estudiante : Estudiante
+    -_docente : Docente
+    -_tutoria : Tutoria
+    -_horario : HorarioTutoria
+    -_estado : string
+
+    +ConId(id : int) : ReservaBuilder
+    +ConEstudiante(estudiante : Estudiante) : ReservaBuilder
+    +ConDocente(docente : Docente) : ReservaBuilder
+    +ConTutoria(tutoria : Tutoria) : ReservaBuilder
+    +ConHorario(horario : HorarioTutoria) : ReservaBuilder
+    +ConEstado(estado : string) : ReservaBuilder
+    +Build() : Reserva
+}
+
+class Estudiante
+class Docente
+class Tutoria
+class HorarioTutoria
+
+ReservaBuilder ..> Reserva : crea
+ReservaBuilder ..> Estudiante
+ReservaBuilder ..> Docente
+ReservaBuilder ..> Tutoria
+ReservaBuilder ..> HorarioTutoria
+
+Reserva --> Estudiante
+Reserva --> Docente
+Reserva --> Tutoria
+Reserva --> HorarioTutoria
+
+@enduml
