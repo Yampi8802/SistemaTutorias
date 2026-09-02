@@ -5,7 +5,7 @@ En el sistema de gestión de tutorías se necesitan diferentes formas para envia
 
 Si esta parte está mezclada con el resto del sistema, cada vez que se quiera agregar una nueva forma de enviar notificaciones habría que modificar el código que ya existe. Esto puede hacer que el sistema tenga más acoplamiento y que después sea más complicado agregar nuevas opciones.
 
-Por eso se utiliza el patrón Factory Method, ya que permite separar la creación de las notificaciones y dejar que cada clase se encargue de crear el tipo de notificación que corresponde. De esta forma, el resto del sistema puede trabajar con el contrato común Notificacion sin tener que conocer directamente cómo se crea cada notificación.
+Por eso se utiliza el patrón Factory Method, ya que permite separar la creación de las notificaciones y dejar que cada clase se encargue de crear el tipo de notificación que corresponde. De esta forma, el resto del sistema puede trabajar con el contrato común `Notificacion` sin tener que conocer directamente cómo se crea cada notificación.
 
 ### Implementación
 Para implementar este patrón se creó la interfaz `Notificacion`, que sirve como un contrato común para los diferentes tipos de notificaciones. A partir de esta interfaz se crearon `NotificacionEmail`, `NotificacionSMS`, `NotificacionWhatsApp` y `NotificacionTelegram`. También se creó la clase abstracta `NotificacionCreator`, que **define** el método para crear la notificación y tiene la lógica común para enviarla. Luego, cada creador concreto (`EmailCreator`, `SmsCreator`, `WhatsAppCreator` y `TelegramCreator`) se encarga de crear el tipo de notificación que le corresponde.
@@ -15,40 +15,42 @@ Para implementar este patrón se creó la interfaz `Notificacion`, que sirve com
 
 Como cuarta opción se agregó Telegram, para lo cual se crearon las clases NotificacionTelegram y TelegramCreator. Para agregar esta nueva opción no fue necesario modificar las clases que ya existían, sino crear una nueva implementación del contrato Notificacion y su respectivo creador. Las clases NotificacionCreator y las demás implementaciones se mantienen sin cambios. Esto demuestra que el patrón permite agregar nuevos tipos de notificación sin tener que modificar la lógica que ya existe.
 
-UML
+### UML
 
 El diagrama UML correspondiente al patrón Factory Method se encuentra en:
 
 Documentacion/Patrones/FactoryMethod.puml
 Documentacion/Patrones/FactoryMethod.png
 
-Builder
-Problema inicial
+## Builder
 
-La clase Reserva contiene varios datos que deben proporcionarse para crear una reserva, como el estudiante, docente, tutoría y horario. Si todos estos datos se reciben directamente mediante un constructor, la creación de objetos puede volverse difícil de leer y mantener, especialmente cuando existen campos opcionales.
+### Problema inicial
 
-Por este motivo se utiliza el patrón Builder, que permite construir una Reserva paso a paso, indicando únicamente los datos necesarios y manteniendo la creación del objeto de una forma más clara.
+La clase `Reserva` contiene varios datos que deben proporcionarse para crear una reserva, como el estudiante, docente, tutoría y horario. Si todos estos datos se reciben directamente mediante un constructor, la creación de objetos puede volverse difícil de leer y mantener, especialmente cuando existen campos opcionales.
 
-Implementación
+Por este motivo se utiliza el patrón Builder, que permite construir una `Reserva` paso a paso, indicando únicamente los datos necesarios y manteniendo la creación del objeto de una forma más clara.
 
-Para implementar este patrón se creó la clase ReservaBuilder, que permite configurar la reserva mediante diferentes métodos antes de construirla. Se utilizó una Fluent API, por lo que cada método devuelve el mismo ReservaBuilder y permite encadenar las llamadas.
+### Implementación
 
-Los campos obligatorios son Estudiante, Docente, Tutoria y Horario. Los campos Id y Estado son opcionales. El estado tiene como valor por defecto "Pendiente" y el Id utiliza su valor predeterminado de int.
+Para implementar este patrón se creó la clase `ReservaBuilder`, que permite configurar la reserva mediante diferentes métodos antes de construirla. Se utilizó una Fluent API, por lo que cada método devuelve el mismo `ReservaBuilder` y permite encadenar las llamadas.
 
-Antes de crear la reserva, el método Build() valida que todos los campos obligatorios hayan sido proporcionados. Si falta alguno, se genera una excepción indicando qué dato es necesario.
+Los campos obligatorios son `Estudiante`, `Docente`, `Tutoria` y `Horario`. Los campos `Id` y `Estado` son opcionales. El estado tiene como valor por defecto `"Pendiente"` y el `Id` utiliza su valor predeterminado de `int`.
 
-Configuraciones utilizadas
+Antes de crear la reserva, el método `Build()` valida que todos los campos obligatorios hayan sido proporcionados. Si falta alguno, se genera una excepción indicando qué dato es necesario.
 
-Se probaron dos configuraciones diferentes de Reserva. La primera establece también un Id, mientras que la segunda utiliza los valores predeterminados para los campos opcionales. En ambos casos se proporcionaron los campos obligatorios.
+### Configuraciones utilizadas
+
+Se probaron dos configuraciones diferentes de `Reserva`. La primera establece también un `Id`, mientras que la segunda utiliza los valores predeterminados para los campos opcionales. En ambos casos se proporcionaron los campos obligatorios.
 
 También se realizó una prueba de validación intentando construir una reserva sin proporcionar todos los campos obligatorios. El Builder detectó la ausencia del docente y generó la excepción correspondiente.
 
-UML
+### UML
 
 El diagrama UML de Builder se encuentra en:
 
-Documentacion/Patrones/Builder.puml
-Documentacion/Patrones/Builder.png
+`Documentacion/Patrones/Builder.puml`
+`Documentacion/Patrones/Builder.png`
+
 
 ## Comparación técnica
 
