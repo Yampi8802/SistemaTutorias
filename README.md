@@ -49,6 +49,37 @@ El diagrama de clases se encuentra en:
 * `Documentacion/modelo-clases.puml`
 * `Documentacion/modelo-clases.png`
 
+## Patrones de diseño
+
+### Factory Method
+
+El patrón Factory Method se utilizó para manejar la creación de los diferentes tipos de notificaciones. Para esto se utilizaron `Notificacion`, `NotificacionCreator` y sus diferentes implementaciones, separando la creación de los objetos de la lógica que se encarga de utilizarlos.
+
+Las variantes implementadas son:
+
+* `NotificacionEmail`
+* `NotificacionSMS`
+* `NotificacionWhatsApp`
+* `NotificacionTelegram`
+
+La variante `Telegram` se agregó después para demostrar que el sistema puede extenderse creando nuevas clases sin tener que modificar las implementaciones que ya existen.
+
+### Builder
+
+El patrón Builder se utilizó para facilitar la creación de objetos `Reserva`, ya que estos tienen varios datos obligatorios y opcionales.
+
+`ReservaBuilder` utiliza una Fluent API, lo que permite ir configurando la reserva poco a poco. Los campos `Estudiante`, `Docente`, `Tutoria` y `Horario` son obligatorios, mientras que `Id` y `Estado` son opcionales. El estado tiene `"Pendiente"` como valor por defecto y el método `Build()` se encarga de validar que todos los campos obligatorios hayan sido proporcionados.
+
+La documentación y los diagramas de cada patrón se encuentran en `Documentacion/Patrones/`.
+
+* `Documentacion/Patrones/FactoryMethod.puml`
+* `Documentacion/Patrones/FactoryMethod.png`
+* `Documentacion/Patrones/Builder.puml`
+* `Documentacion/Patrones/Builder.png`
+
+La comparación técnica de los dos patrones se encuentra en `Documentacion/ComparacionPatrones.md`.
+
+
 ## Requisitos
 
 * C# / .NET 10
