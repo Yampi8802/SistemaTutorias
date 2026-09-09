@@ -1,8 +1,15 @@
 @startuml
 
+title Sistema de Gestión de Tutorías - Modelo de Clases
+
+' =========================
+' CLASES DEL DOMINIO
+' =========================
+
 class Administrador {
     +Id : int
     +Nombre : string
+    +Correo : string
 }
 
 class Estudiante {
@@ -14,7 +21,7 @@ class Estudiante {
 class Docente {
     +Id : int
     +Nombre : string
-    +Especialidad : string
+    +Correo : string
 }
 
 class Tutoria {
@@ -40,6 +47,11 @@ class Reserva {
     +Estado : string
 }
 
+
+' =========================
+' NOTIFICACIONES
+' =========================
+
 interface INotificador {
     +Enviar(destinatario : string, mensaje : string)
 }
@@ -48,25 +60,138 @@ class Notificador {
     +Enviar(destinatario : string, mensaje : string)
 }
 
+Notificador ..|> INotificador
+
+
+' =========================
+' SERVICIOS
+' =========================
+
 class ServicioReservas {
     -_notificador : INotificador
     +ServicioReservas(notificador : INotificador)
     +CrearReserva(reserva : Reserva)
 }
 
+ServicioReservas --> Reserva
+ServicioReservas --> INotificador
+
+
+' =========================
+' FACTORY METHOD
+' =========================
+
+interface Notificacion {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class NotificacionEmail {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class NotificacionSMS {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class NotificacionWhatsApp {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+class NotificacionTelegram {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+abstract class NotificacionCreator {
+    +CrearNotificacion() : Notificacion
+    +EnviarNotificacion(destinatario : string, mensaje : string)
+}
+
+class EmailCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class SmsCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class WhatsAppCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+class TelegramCreator {
+    +CrearNotificacion() : Notificacion
+}
+
+NotificacionEmail ..|> Notificacion
+NotificacionSMS ..|> Notificacion
+NotificacionWhatsApp ..|> Notificacion
+NotificacionTelegram ..|> Notificacion
+
+EmailCreator --|> NotificacionCreator
+SmsCreator --|> NotificacionCreator
+WhatsAppCreator --|> NotificacionCreator
+TelegramCreator --|> NotificacionCreator
+
+NotificacionCreator ..> Notificacion : crea
+
+EmailCreator --> NotificacionEmail : crea
+SmsCreator --> NotificacionSMS : crea
+WhatsAppCreator --> NotificacionWhatsApp : crea
+TelegramCreator --> NotificacionTelegram : crea
+
+
+' =========================
+' BUILDER
+' =========================
+
+class ReservaBuilder {
+    -_id : int
+    -_estudiante : Estudiante
+    -_docente : Docente
+    -_tutoria : Tutoria
+    -_horario : HorarioTutoria
+    -_estado : string
+    +ConId(id : int) : ReservaBuilder
+    +ConEstudiante(estudiante : Estudiante) : ReservaBuilder
+    +ConDocente(docente : Docente) : ReservaBuilder
+    +ConTutoria(tutoria : Tutoria) : ReservaBuilder
+    +ConHorario(horario : HorarioTutoria) : ReservaBuilder
+    +ConEstado(estado : string) : ReservaBuilder
+    +Build() : Reserva
+}
+
+ReservaBuilder ..> Reserva : crea
+ReservaBuilder ..> Estudiante
+ReservaBuilder ..> Docente
+ReservaBuilder ..> Tutoria
+ReservaBuilder ..> HorarioTutoria
+
+
+' =========================
+' ADAPTER
+' =========================
+
 interface Videoconferencia {
     +CrearReunion(titulo : string) : string
 }
 
 class ProveedorZoom {
-    +IniciarReunionZoom(temaReunion : string) : string
+    +IniciarReunion(titulo : string) : string
 }
 
 class ZoomAdapter {
-    -_proveedorZoom : ProveedorZoom
-    +ZoomAdapter(proveedorZoom : ProveedorZoom)
+    -_proveedor : ProveedorZoom
+    +ZoomAdapter(proveedor : ProveedorZoom)
     +CrearReunion(titulo : string) : string
 }
+
+ZoomAdapter ..|> Videoconferencia
+ZoomAdapter --> ProveedorZoom : adapta
+
+
+' =========================
+' FACADE
+' =========================
 
 class TutoriasFacade {
     -_servicioReservas : ServicioReservas
@@ -75,21 +200,18 @@ class TutoriasFacade {
     +CrearTutoriaVirtual(reserva : Reserva) : string
 }
 
+TutoriasFacade --> ServicioReservas : coordina
+TutoriasFacade --> Videoconferencia : coordina
+TutoriasFacade --> Reserva : utiliza
+
+
+' =========================
+' RELACIONES DEL DOMINIO
+' =========================
+
 Reserva "1" --> "1" Estudiante
 Reserva "1" --> "1" Docente
 Reserva "1" --> "1" Tutoria
 Reserva "1" --> "1" HorarioTutoria
-
-Notificador ..|> INotificador
-
-ServicioReservas --> Reserva
-ServicioReservas --> INotificador
-
-ZoomAdapter ..|> Videoconferencia
-ZoomAdapter --> ProveedorZoom
-
-TutoriasFacade --> ServicioReservas
-TutoriasFacade --> Videoconferencia
-TutoriasFacade --> Reserva
 
 @enduml

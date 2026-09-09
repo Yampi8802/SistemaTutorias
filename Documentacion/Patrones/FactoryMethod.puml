@@ -42,10 +42,10 @@ class TelegramCreator {
     +CrearNotificacion() : Notificacion
 }
 
-Notificacion <|-- NotificacionEmail
-Notificacion <|-- NotificacionSMS
-Notificacion <|-- NotificacionWhatsApp
-Notificacion <|-- NotificacionTelegram
+Notificacion <|.. NotificacionEmail
+Notificacion <|.. NotificacionSMS
+Notificacion <|.. NotificacionWhatsApp
+Notificacion <|.. NotificacionTelegram
 
 NotificacionCreator <|-- EmailCreator
 NotificacionCreator <|-- SmsCreator
