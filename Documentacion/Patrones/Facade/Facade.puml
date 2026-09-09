@@ -1,0 +1,39 @@
+@startuml
+title Patrón Facade - Gestión de Tutorías
+
+class TutoriasFacade {
+    -_servicioReservas : ServicioReservas
+    -_videoconferencia : Videoconferencia
+    +TutoriasFacade(servicioReservas : ServicioReservas, videoconferencia : Videoconferencia)
+    +CrearTutoriaVirtual(reserva : Reserva) : string
+}
+
+class ServicioReservas {
+    -_notificador : INotificador
+    +ServicioReservas(notificador : INotificador)
+    +CrearReserva(reserva : Reserva)
+}
+
+interface Videoconferencia {
+    +CrearReunion(titulo : string) : string
+}
+
+class Reserva {
+    +Id : int
+    +Estudiante : Estudiante
+    +Docente : Docente
+    +Tutoria : Tutoria
+    +Horario : HorarioTutoria
+    +Estado : string
+}
+
+interface INotificador {
+    +Enviar(destinatario : string, mensaje : string)
+}
+
+TutoriasFacade --> ServicioReservas : coordina
+TutoriasFacade --> Videoconferencia : coordina
+TutoriasFacade --> Reserva : utiliza
+ServicioReservas --> INotificador : utiliza
+
+@enduml

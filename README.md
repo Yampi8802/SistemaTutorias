@@ -2,108 +2,440 @@
 
 ## Propósito
 
-Este proyecto consiste en un sistema para gestionar las tutorías entre estudiantes y docentes. La idea es poder registrar a los estudiantes, docentes, tutorías, horarios y reservas, además de enviar una notificación cuando una reserva sea confirmada.
+Este proyecto consiste en un sistema para gestionar las tutorías entre estudiantes y docentes.
+
+El sistema permite representar estudiantes, docentes, tutorías, horarios y reservas. Además, incorpora mecanismos para enviar notificaciones y gestionar la creación de tutorías virtuales mediante una videoconferencia.
+
+El proyecto integra diferentes patrones de diseño para mejorar la flexibilidad, reducir el acoplamiento y facilitar la evolución del sistema.
+
+---
 
 ## Descripción del problema
 
-Los estudiantes necesitan poder solicitar una tutoría dependiendo de los horarios que tengan disponibles los docentes. Por eso, el sistema permite registrar la información necesaria para realizar una reserva y también controlar el estado en el que se encuentra.
+Los estudiantes necesitan poder solicitar tutorías dependiendo de los horarios disponibles de los docentes.
 
-Además, se separó la parte de las notificaciones mediante una interfaz, para que el servicio de reservas no tenga que depender directamente de una implementación específica.
+Por esta razón, el sistema permite registrar la información necesaria para realizar una reserva y controlar el estado en el que se encuentra.
+
+Además, el sistema necesita manejar diferentes formas de notificación y permitir la integración con proveedores externos de videoconferencia.
+
+Para evitar dependencias innecesarias entre componentes, se utilizan abstracciones como `INotificador` y `Videoconferencia`.
+
+---
 
 ## Clases principales
 
-* **Administrador:** se encarga de gestionar a los estudiantes y docentes.
-* **Estudiante:** representa al estudiante que solicita una tutoría.
-* **Docente:** representa al docente que ofrece las tutorías.
-* **Tutoria:** representa el tema y la descripción de la tutoría.
-* **HorarioTutoria:** representa la fecha, el horario y si está disponible.
-* **Reserva:** contiene la información de la reserva y su estado.
-* **ServicioReservas:** se encarga de crear y confirmar las reservas.
-* **INotificador:** define la operación que se utiliza para enviar las notificaciones.
-* **Notificador:** se encarga de implementar el envío de las notificaciones.
+- **Administrador:** representa al administrador encargado de gestionar información del sistema.
+- **Estudiante:** representa al estudiante que solicita una tutoría.
+- **Docente:** representa al docente que ofrece las tutorías.
+- **Tutoria:** representa el tema y la descripción de una tutoría.
+- **HorarioTutoria:** representa la fecha, horario y disponibilidad de una tutoría.
+- **Reserva:** contiene la información de la reserva y su estado.
+- **ServicioReservas:** se encarga de gestionar la creación y confirmación de reservas.
+- **INotificador:** define el contrato utilizado para enviar notificaciones.
+- **Notificador:** implementa el envío de notificaciones.
+
+---
 
 ## Decisiones de diseño
 
-Se separaron las diferentes responsabilidades en varias clases para que cada una se encargue de una parte específica del sistema y así mantener una mayor cohesión.
+Se separaron las responsabilidades en diferentes clases para mantener una mayor cohesión y evitar concentrar demasiada lógica en una sola clase.
 
-En el caso de las reservas, `ServicioReservas` utiliza la interfaz `INotificador` en lugar de utilizar directamente `Notificador`. De esta forma, si después se necesita cambiar la forma en la que se envían las notificaciones, no sería necesario modificar toda la lógica del servicio de reservas.
+Por ejemplo, `Reserva` representa la información de una reserva, mientras que `ServicioReservas` gestiona el proceso relacionado con su creación.
 
-## Principios SOLID
+También se utilizaron abstracciones para reducir el acoplamiento.
 
-### SRP - Single Responsibility Principle
+`ServicioReservas` depende de `INotificador` en lugar de depender directamente de `Notificador`.
 
-Se separaron las responsabilidades entre diferentes clases. Por ejemplo, `Reserva` se encarga de representar los datos de la reserva, `ServicioReservas` de gestionar las reservas y `Notificador` de enviar las notificaciones.
+De manera similar, `TutoriasFacade` trabaja con la interfaz `Videoconferencia` y no directamente con `ProveedorZoom`.
 
-De esta manera cada clase tiene una responsabilidad más específica y no se termina teniendo una sola clase con demasiadas funciones diferentes.
+---
 
-### DIP - Dependency Inversion Principle
+# Principios SOLID
 
-`ServicioReservas` no depende directamente de `Notificador`, sino de la interfaz `INotificador`.
+## SRP — Single Responsibility Principle
 
-Esta dependencia se recibe mediante el constructor, por lo que si más adelante se cambia la forma de enviar las notificaciones, se puede cambiar la implementación sin tener que modificar directamente la lógica de `ServicioReservas`.
+Las clases tienen responsabilidades diferenciadas.
 
-## Diagrama UML
+Por ejemplo:
 
-El diagrama de clases se encuentra en:
+- `Reserva` representa los datos de una reserva.
+- `ServicioReservas` gestiona el proceso relacionado con las reservas.
+- `Notificador` se encarga del envío de notificaciones.
+- `ZoomAdapter` se encarga de adaptar la interfaz del proveedor Zoom.
+- `TutoriasFacade` coordina el proceso de creación de una tutoría virtual.
 
-* `Documentacion/modelo-clases.puml`
-* `Documentacion/modelo-clases.png`
+De esta manera se evita concentrar diferentes responsabilidades en una sola clase.
 
-## Patrones de diseño
+## DIP — Dependency Inversion Principle
+
+`ServicioReservas` depende de la abstracción `INotificador` en lugar de depender directamente de `Notificador`.
+
+La dependencia se recibe mediante el constructor.
+
+De esta manera, la implementación concreta de las notificaciones puede cambiar sin modificar la lógica principal de `ServicioReservas`.
+
+De forma similar, `TutoriasFacade` depende de la abstracción `Videoconferencia` y no directamente de `ProveedorZoom`.
+
+Esto permite sustituir el proveedor de videoconferencia mediante otra implementación compatible con la interfaz.
+
+---
+
+## Cohesión y acoplamiento
+
+Las responsabilidades se mantienen agrupadas de acuerdo con el propósito de cada componente.
+
+El sistema utiliza interfaces como `INotificador` y `Videoconferencia` para reducir el acoplamiento entre las clases.
+
+Por ejemplo, `ServicioReservas` no necesita conocer los detalles internos de `Notificador`.
+
+De igual manera, `TutoriasFacade` no necesita conocer directamente cómo `ProveedorZoom` inicia una reunión, ya que trabaja mediante `Videoconferencia`.
+
+Esto facilita la sustitución y evolución de las implementaciones.
+
+---
+
+# Patrones de diseño utilizados
+
+## Factory Method
+
+Se utiliza para crear diferentes tipos de notificaciones sin que el código cliente tenga que depender directamente de las clases concretas.
+
+Actualmente se incluyen:
+
+- Email
+- SMS
+- WhatsApp
+- Telegram
+
+La estructura utiliza `Notificacion` como producto común y `NotificacionCreator` como creador abstracto.
+
+Las clases concretas son:
+
+- `EmailCreator`
+- `SmsCreator`
+- `WhatsAppCreator`
+- `TelegramCreator`
+
+La incorporación de Telegram demuestra que es posible agregar una nueva variante sin modificar las implementaciones existentes del patrón.
+
+---
+
+## Builder
+
+Se utiliza para construir objetos `Reserva` mediante una interfaz fluida.
+
+`ReservaBuilder` permite configurar la reserva paso a paso mediante métodos como:
+
+- `ConId()`
+- `ConEstudiante()`
+- `ConDocente()`
+- `ConTutoria()`
+- `ConHorario()`
+- `ConEstado()`
+
+Los campos obligatorios son:
+
+- `Estudiante`
+- `Docente`
+- `Tutoria`
+- `Horario`
+
+Los campos `Id` y `Estado` son opcionales.
+
+El estado utiliza `"Pendiente"` como valor predeterminado.
+
+El método `Build()` valida que los campos obligatorios hayan sido proporcionados antes de crear la reserva.
+
+---
+
+## Adapter
+
+Se utiliza para integrar un proveedor externo de videoconferencias cuyo método de trabajo no coincide directamente con la interfaz utilizada por el sistema.
+
+La estructura está formada por:
+
+- `Videoconferencia`
+- `ProveedorZoom`
+- `ZoomAdapter`
+
+`Videoconferencia` define el contrato que espera el sistema.
+
+`ProveedorZoom` representa el proveedor externo.
+
+`ZoomAdapter` adapta la operación de `ProveedorZoom` al contrato `Videoconferencia`.
+
+De esta forma, el código cliente trabaja con la abstracción `Videoconferencia` sin depender directamente de la implementación del proveedor externo.
+
+---
+
+## Facade
+
+Se utiliza para simplificar el proceso de creación de una tutoría virtual.
+
+La clase `TutoriasFacade` coordina los componentes necesarios para realizar el proceso.
+
+Actualmente coordina:
+
+- `ServicioReservas`
+- `Videoconferencia`
+
+El cliente utiliza una única operación:
+
+`CrearTutoriaVirtual(Reserva reserva)`
+
+Internamente, el Facade:
+
+1. Crea y confirma la reserva.
+2. Solicita la creación de una reunión.
+3. Obtiene el enlace de videoconferencia.
+4. Devuelve el enlace al cliente.
+
+Esto permite ocultar parte de la complejidad interna del proceso.
+
+---
+
+# Pertinencia de los patrones
+
+Los patrones fueron seleccionados de acuerdo con problemas concretos identificados en el sistema.
 
 ### Factory Method
 
-El patrón Factory Method se utilizó para manejar la creación de los diferentes tipos de notificaciones. Para esto se utilizaron `Notificacion`, `NotificacionCreator` y sus diferentes implementaciones, separando la creación de los objetos de la lógica que se encarga de utilizarlos.
-
-Las variantes implementadas son:
-
-* `NotificacionEmail`
-* `NotificacionSMS`
-* `NotificacionWhatsApp`
-* `NotificacionTelegram`
-
-La variante `Telegram` se agregó después para demostrar que el sistema puede extenderse creando nuevas clases sin tener que modificar las implementaciones que ya existen.
+Se utiliza porque el sistema necesita crear diferentes tipos de notificaciones. El patrón permite encapsular la creación de cada tipo de notificación y facilita agregar nuevas variantes.
 
 ### Builder
 
-El patrón Builder se utilizó para facilitar la creación de objetos `Reserva`, ya que estos tienen varios datos obligatorios y opcionales.
+Se utiliza porque una `Reserva` contiene varios atributos y algunos son obligatorios. El patrón permite construir el objeto paso a paso y centralizar las validaciones necesarias.
 
-`ReservaBuilder` utiliza una Fluent API, lo que permite ir configurando la reserva poco a poco. Los campos `Estudiante`, `Docente`, `Tutoria` y `Horario` son obligatorios, mientras que `Id` y `Estado` son opcionales. El estado tiene `"Pendiente"` como valor por defecto y el método `Build()` se encarga de validar que todos los campos obligatorios hayan sido proporcionados.
+### Adapter
 
-La documentación y los diagramas de cada patrón se encuentran en `Documentacion/Patrones/`.
+Se utiliza porque un proveedor externo de videoconferencia puede tener una interfaz diferente a la que utiliza el sistema. El Adapter permite integrar dicho proveedor sin modificar su implementación.
 
-* `Documentacion/Patrones/FactoryMethod.puml`
-* `Documentacion/Patrones/FactoryMethod.png`
-* `Documentacion/Patrones/Builder.puml`
-* `Documentacion/Patrones/Builder.png`
+### Facade
 
-La comparación técnica de los dos patrones se encuentra en `Documentacion/ComparacionPatrones.md`.
+Se utiliza porque la creación de una tutoría virtual requiere coordinar diferentes componentes. El Facade proporciona una operación sencilla al cliente y oculta la complejidad interna.
 
+---
 
-## Requisitos
+# Diagrama UML
 
-* C# / .NET 10
-* Visual Studio Code o Visual Studio
-* Git
+El diagrama actualizado del sistema se encuentra en:
 
-## Ejecución
+- `Documentacion/modelo-clases.puml`
+- `Documentacion/modelo-clases.png`
 
-Para compilar el proyecto se utiliza:
+El diagrama representa las principales clases del dominio, servicios, abstracciones y patrones de diseño utilizados en el sistema.
+
+---
+
+# Documentación de patrones
+
+Los diagramas individuales de los patrones se encuentran en:
+
+### Factory Method
+
+- `Documentacion/Patrones/FactoryMethod.puml`
+- `Documentacion/Patrones/FactoryMethod.png`
+
+### Builder
+
+- `Documentacion/Patrones/Builder.puml`
+- `Documentacion/Patrones/Builder.png`
+
+### Adapter
+
+- `Documentacion/Patrones/Adapter/Adapter.puml`
+- `Documentacion/Patrones/Adapter/Adapter.png`
+
+### Facade
+
+- `Documentacion/Patrones/Facade/Facade.puml`
+- `Documentacion/Patrones/Facade/Facade.png`
+
+La documentación y comparación de los patrones se encuentra en:
+
+- `Documentacion/ComparacionPatrones.md`
+
+---
+
+# Estructura del proyecto
+
+```text
+SistemaTutoria/
+│
+├── Program.cs
+├── README.md
+├── SistemaTutoria.csproj
+│
+├── Dominio/
+│   ├── Administrador.cs
+│   ├── Docente.cs
+│   ├── Estudiante.cs
+│   ├── HorarioTutoria.cs
+│   ├── Reserva.cs
+│   └── Tutoria.cs
+│
+├── Servicios/
+│   └── ServicioReservas.cs
+│
+├── Notificaciones/
+│   ├── INotificador.cs
+│   └── Notificador.cs
+│
+├── Patrones/
+│   ├── Builder/
+│   │   └── ReservaBuilder.cs
+│   │
+│   └── Factory/
+│       ├── Notificacion.cs
+│       ├── NotificacionCreator.cs
+│       ├── EmailCreator.cs
+│       ├── SmsCreator.cs
+│       ├── WhatsAppCreator.cs
+│       ├── TelegramCreator.cs
+│       ├── NotificacionEmail.cs
+│       ├── NotificacionSMS.cs
+│       ├── NotificacionWhatsApp.cs
+│       └── NotificacionTelegram.cs
+│
+└── Documentacion/
+    ├── AnalisisDominio.md
+    ├── ComparacionPatrones.md
+    ├── modelo-clases.puml
+    ├── modelo-clases.png
+    │
+    └── Patrones/
+        ├── Adapter/
+        │   ├── Adapter.puml
+        │   ├── Adapter.png
+        │   ├── Videoconferencia.cs
+        │   ├── ProveedorZoom.cs
+        │   └── ZoomAdapter.cs
+        │
+        ├── Facade/
+        │   ├── Facade.puml
+        │   ├── Facade.png
+        │   └── TutoriasFacade.cs
+        │
+        ├── FactoryMethod.puml
+        ├── FactoryMethod.png
+        ├── Builder.puml
+        └── Builder.png
+```
+
+---
+
+# Requisitos
+
+Para ejecutar el proyecto se necesita:
+
+- Windows 10/11.
+- .NET SDK 10.0 o superior compatible con el proyecto.
+- Visual Studio Code, Visual Studio u otro editor compatible con C#.
+
+El proyecto utiliza C# y .NET 10.
+
+---
+
+# Ejecución
+
+Desde la carpeta raíz del proyecto, ejecutar:
 
 ```bash
 dotnet build
 ```
 
-Para ejecutar el proyecto:
+Si la compilación finaliza correctamente, ejecutar:
 
 ```bash
 dotnet run
 ```
 
-## Git
+El programa mostrará en consola las pruebas de los patrones Factory Method, Builder, Adapter y Facade.
 
-El proyecto utiliza Git para ir registrando los cambios que se van realizando mediante commits descriptivos.
+---
 
-## Uso de inteligencia artificial
+# Verificación
 
-Durante el desarrollo de esta actividad utilicé ChatGPT como tutor o guía para poder entender mejor las instrucciones, los conceptos de diseño orientado a objetos, Git y la forma de organizar la documentación.
+Se verificó la compilación y ejecución del proyecto mediante:
+
+```bash
+dotnet build
+```
+
+Resultado:
+
+```text
+Restauración completada (0,4s)
+SistemaTutoria net10.0 realizado correctamente
+
+Compilación realizado correctamente en 1,2s
+```
+
+También se verificó la ejecución mediante:
+
+```bash
+dotnet run
+```
+
+Durante la ejecución se comprobó:
+
+- Envío de notificaciones mediante Factory Method.
+- Creación de reservas mediante Builder.
+- Validación de campos obligatorios del Builder.
+- Integración del proveedor Zoom mediante Adapter.
+- Coordinación del proceso de tutoría virtual mediante Facade.
+- Generación del enlace de videoconferencia.
+
+La ejecución produjo, entre otros, los siguientes resultados:
+
+```text
+=== PRUEBA FACTORY METHOD ===
+[EMAIL] Enviando a jean@email.com: Su tutoría ha sido confirmada.
+[SMS] Enviando a 0999999999: Su tutoría ha sido confirmada.
+[WHATSAPP] Enviando a 0999999999: Su tutoría ha sido confirmada.
+[TELEGRAM] Enviando a usuario_telegram: Su tutoría ha sido confirmada.
+
+=== PRUEBA BUILDER ===
+Reserva creada con Builder. Id: 2
+Estado: Pendiente
+Segunda reserva creada con Builder. Id: 0
+Estado: Pendiente
+Validación: El docente es obligatorio.
+
+=== PRUEBA FACADE + ADAPTER ===
+Notificación enviada a jean@email.com: Su reserva de tutoría sobre Programación en C# ha sido confirmada.
+Zoom: iniciando reunión 'Tutoria de Programación en C#'.
+Estado de la reserva: Confirmada
+Tutoría virtual creada.
+Enlace: https://zoom.us/j/123456789
+
+=== FIN DE PRUEBAS ===
+```
+
+Finalmente, se ejecutó:
+
+```bash
+dotnet clean
+```
+
+para comprobar que el proyecto puede limpiarse correctamente.
+
+---
+
+# Git y GitHub
+
+El proyecto utiliza Git para registrar la evolución incremental del desarrollo.
+
+Los cambios realizados durante las diferentes etapas se registran mediante commits, permitiendo identificar la incorporación progresiva de los patrones de diseño.
+
+Repositorio:
+
+https://github.com/Yampi8802/SistemaTutorias
+
+---
+
+# Uso de inteligencia artificial
+
+Durante el desarrollo de esta actividad utilicé ChatGPT como tutor o guía para poder entender mejor las instrucciones, los conceptos de diseño orientado a objetos, los patrones de diseño, Git y la organización de la documentación.
+
+Las implementaciones fueron revisadas y ejecutadas en el entorno de desarrollo para comprobar su funcionamiento.

@@ -54,6 +54,27 @@ class ServicioReservas {
     +CrearReserva(reserva : Reserva)
 }
 
+interface Videoconferencia {
+    +CrearReunion(titulo : string) : string
+}
+
+class ProveedorZoom {
+    +IniciarReunionZoom(temaReunion : string) : string
+}
+
+class ZoomAdapter {
+    -_proveedorZoom : ProveedorZoom
+    +ZoomAdapter(proveedorZoom : ProveedorZoom)
+    +CrearReunion(titulo : string) : string
+}
+
+class TutoriasFacade {
+    -_servicioReservas : ServicioReservas
+    -_videoconferencia : Videoconferencia
+    +TutoriasFacade(servicioReservas : ServicioReservas, videoconferencia : Videoconferencia)
+    +CrearTutoriaVirtual(reserva : Reserva) : string
+}
+
 Reserva "1" --> "1" Estudiante
 Reserva "1" --> "1" Docente
 Reserva "1" --> "1" Tutoria
@@ -64,5 +85,11 @@ Notificador ..|> INotificador
 ServicioReservas --> Reserva
 ServicioReservas --> INotificador
 
+ZoomAdapter ..|> Videoconferencia
+ZoomAdapter --> ProveedorZoom
+
+TutoriasFacade --> ServicioReservas
+TutoriasFacade --> Videoconferencia
+TutoriasFacade --> Reserva
 
 @enduml

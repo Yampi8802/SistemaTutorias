@@ -12,7 +12,7 @@ El sistema va a permitir gestionar las tutorías entre los estudiantes y los doc
 | Estudiante | Solicitar tutorías y realizar reservas. | Id, nombre, correo | Puede hacer reservas y recibir notificaciones. |
 | Docente | Ofrecer tutorías y administrar sus horarios disponibles. | Id, nombre, especialidad | Puede publicar sus horarios y participar en las reservas. |
 | Tutoría | Representar el tema o servicio de tutoría que se va a realizar. | Id, tema, descripción | El estudiante la selecciona cuando realiza una reserva. |
-| HorarioTutoría | Representar los horarios que están disponibles para una tutoría. | Id, fecha, hora inicio, hora fin, disponibilidad | El horario puede estar disponible o no disponible. |
+| HorarioTutoria | Representar los horarios que están disponibles para una tutoría. | Id, fecha, hora inicio, hora fin, disponibilidad | El horario puede estar disponible o no disponible. |
 | Reserva | Registrar la solicitud de una tutoría y saber en qué estado está. | Id, estudiante, docente, tutoría, horario, estado | Puede estar confirmada, cancelada o reprogramada. |
 | Notificador | Enviar información cuando ocurre algún evento importante relacionado con una reserva. | Destinatario, mensaje | Se utiliza para las notificaciones sin depender directamente de una tecnología específica. |
 

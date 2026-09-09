@@ -3,6 +3,8 @@ using SistemaTutoria.Notificaciones;
 using SistemaTutoria.Servicios;
 using SistemaTutoria.Patrones.Factory;
 using SistemaTutoria.Patrones.Builder;
+using SistemaTutoria.Patrones.Adapter;
+using SistemaTutoria.Patrones.Facade;
 
 var estudiante = new Estudiante
 {
@@ -43,12 +45,8 @@ var reserva = new Reserva
     Horario = horario
 };
 
-INotificador notificador = new Notificador();
-var servicioReservas = new ServicioReservas(notificador);
+Console.WriteLine("=== SISTEMA DE GESTIÓN DE TUTORÍAS ===");
 
-servicioReservas.CrearReserva(reserva);
-
-Console.WriteLine($"Estado de la reserva: {reserva.Estado}");
 Console.WriteLine("\n=== PRUEBA FACTORY METHOD ===");
 
 NotificacionCreator emailCreator = new EmailCreator();
@@ -68,16 +66,16 @@ whatsappCreator.EnviarNotificacion(
     "0999999999",
     "Su tutoría ha sido confirmada."
 );
+
 NotificacionCreator telegramCreator = new TelegramCreator();
 telegramCreator.EnviarNotificacion(
     "usuario_telegram",
     "Su tutoría ha sido confirmada."
 );
+
 Console.WriteLine("\n=== PRUEBA BUILDER ===");
 
-var reservaBuilder = new ReservaBuilder();
-
-var reservaBuilder1 = reservaBuilder
+var reservaBuilder1 = new ReservaBuilder()
     .ConId(2)
     .ConEstudiante(estudiante)
     .ConDocente(docente)
@@ -87,6 +85,7 @@ var reservaBuilder1 = reservaBuilder
 
 Console.WriteLine($"Reserva creada con Builder. Id: {reservaBuilder1.Id}");
 Console.WriteLine($"Estado: {reservaBuilder1.Estado}");
+
 var reservaBuilder2 = new ReservaBuilder()
     .ConEstudiante(estudiante)
     .ConDocente(docente)
@@ -96,6 +95,7 @@ var reservaBuilder2 = new ReservaBuilder()
 
 Console.WriteLine($"Segunda reserva creada con Builder. Id: {reservaBuilder2.Id}");
 Console.WriteLine($"Estado: {reservaBuilder2.Estado}");
+
 try
 {
     var reservaInvalida = new ReservaBuilder()
@@ -106,3 +106,25 @@ catch (InvalidOperationException ex)
 {
     Console.WriteLine($"Validación: {ex.Message}");
 }
+
+Console.WriteLine("\n=== PRUEBA FACADE + ADAPTER ===");
+
+INotificador notificador = new Notificador();
+
+var servicioReservas = new ServicioReservas(notificador);
+
+var proveedorZoom = new ProveedorZoom();
+Videoconferencia videoconferencia = new ZoomAdapter(proveedorZoom);
+
+var facade = new TutoriasFacade(
+    servicioReservas,
+    videoconferencia
+);
+
+var enlaceTutoria = facade.CrearTutoriaVirtual(reserva);
+
+Console.WriteLine($"Estado de la reserva: {reserva.Estado}");
+Console.WriteLine("Tutoría virtual creada.");
+Console.WriteLine($"Enlace: {enlaceTutoria}");
+
+Console.WriteLine("\n=== FIN DE PRUEBAS ===");

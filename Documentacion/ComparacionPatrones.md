@@ -74,3 +74,88 @@ Por otro lado, Builder permitió mejorar la forma en que se crean las reservas, 
 Aunque los dos patrones ayudan a tener un diseño más flexible, cada uno resuelve un problema diferente. Factory Method se enfoca principalmente en **cómo crear diferentes tipos de objetos**, mientras que Builder se enfoca en **cómo construir un objeto con diferentes configuraciones**.
 
 Con esta comparación se pudo identificar que la elección de un patrón depende del problema que se quiera resolver y no simplemente de agregar un patrón para tener más clases en el sistema.
+
+---
+
+## 3. ADAPTER
+
+### Problema identificado
+
+El sistema necesita integrar un proveedor externo de videoconferencias. El proveedor Zoom utiliza un método propio para iniciar reuniones que no coincide directamente con la interfaz utilizada por el sistema.
+
+El sistema necesita trabajar con una abstracción común para no depender directamente de la implementación específica del proveedor externo.
+
+### Solución
+
+Se utiliza el patrón Adapter para adaptar la interfaz de `ProveedorZoom` al contrato `Videoconferencia` que espera el sistema.
+
+La estructura implementada es:
+
+- `Videoconferencia`: interfaz que define el contrato esperado por el sistema.
+- `ProveedorZoom`: representa el proveedor externo con una interfaz diferente.
+- `ZoomAdapter`: adapta las operaciones de `ProveedorZoom` al contrato `Videoconferencia`.
+
+### Beneficios
+
+- Permite integrar un proveedor externo sin modificar su implementación.
+- Reduce el acoplamiento entre el sistema y el proveedor.
+- Permite sustituir o agregar otros proveedores mediante la misma abstracción.
+- Mantiene el código cliente trabajando con la interfaz `Videoconferencia`.
+
+### Costos
+
+- Se agrega una clase Adapter.
+- Existe una pequeña capa adicional entre el sistema y el proveedor externo.
+
+---
+
+## 4. FACADE
+
+### Problema identificado
+
+La creación de una tutoría virtual requiere coordinar diferentes componentes del sistema, como el servicio de reservas y el servicio de videoconferencia.
+
+Si el cliente conoce directamente todos estos componentes, aumenta el acoplamiento y la complejidad del código cliente.
+
+### Solución
+
+Se utiliza el patrón Facade mediante la clase `TutoriasFacade`.
+
+El Facade proporciona una operación simplificada:
+
+`CrearTutoriaVirtual(Reserva reserva)`
+
+Internamente coordina:
+
+1. La creación y confirmación de la reserva mediante `ServicioReservas`.
+2. La creación de la reunión mediante `Videoconferencia`.
+3. La obtención del enlace de la reunión.
+
+### Beneficios
+
+- Simplifica el uso del sistema para el cliente.
+- Reduce el acoplamiento con los servicios internos.
+- Centraliza la coordinación del proceso de creación de una tutoría virtual.
+- Facilita la evolución de los componentes internos.
+
+### Costos
+
+- Se agrega una clase adicional.
+- El Facade debe mantenerse actualizado cuando cambia el proceso que coordina.
+
+---
+
+## Comparación de los patrones
+
+| Patrón | Problema que resuelve | Aplicación en el sistema |
+|---|---|---|
+| Factory Method | Creación de diferentes tipos de notificación | Email, SMS, WhatsApp y Telegram |
+| Builder | Construcción controlada de objetos con varios datos | Creación de Reserva |
+| Adapter | Incompatibilidad entre interfaces | Integración con ProveedorZoom |
+| Facade | Complejidad al coordinar varios componentes | Creación de una tutoría virtual |
+
+### Conclusión
+
+Los patrones seleccionados responden a problemas diferentes del sistema. Factory Method permite gestionar la creación de diferentes tipos de notificaciones, mientras que Builder facilita la construcción de reservas. En el incremento actual, Adapter permite integrar un proveedor externo de videoconferencias y Facade simplifica la coordinación de los servicios necesarios para crear una tutoría virtual.
+
+La utilización de estos patrones busca reducir el acoplamiento, mantener responsabilidades claras y facilitar la evolución del sistema sin introducir patrones que no sean necesarios.

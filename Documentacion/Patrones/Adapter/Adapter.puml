@@ -1,0 +1,21 @@
+@startuml
+title Patrón Adapter - Videoconferencia
+
+interface Videoconferencia {
+    +CrearReunion(titulo : string) : string
+}
+
+class ProveedorZoom {
+    +IniciarReunionZoom(temaReunion : string) : string
+}
+
+class ZoomAdapter {
+    -_proveedorZoom : ProveedorZoom
+    +ZoomAdapter(proveedorZoom : ProveedorZoom)
+    +CrearReunion(titulo : string) : string
+}
+
+Videoconferencia <|.. ZoomAdapter
+ZoomAdapter --> ProveedorZoom : adapta
+
+@enduml
