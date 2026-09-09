@@ -127,4 +127,33 @@ Console.WriteLine($"Estado de la reserva: {reserva.Estado}");
 Console.WriteLine("Tutoría virtual creada.");
 Console.WriteLine($"Enlace: {enlaceTutoria}");
 
+Console.WriteLine("\n=== PRUEBA HORARIO NO DISPONIBLE ===");
+
+var horarioNoDisponible = new HorarioTutoria
+{
+    Id = 2,
+    Fecha = DateTime.Today,
+    HoraInicio = new TimeSpan(14, 0, 0),
+    HoraFin = new TimeSpan(15, 0, 0),
+    Disponible = false
+};
+
+var reservaNoDisponible = new Reserva
+{
+    Id = 3,
+    Estudiante = estudiante,
+    Docente = docente,
+    Tutoria = tutoria,
+    Horario = horarioNoDisponible
+};
+
+try
+{
+    servicioReservas.CrearReserva(reservaNoDisponible);
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Validación: {ex.Message}");
+}
+
 Console.WriteLine("\n=== FIN DE PRUEBAS ===");

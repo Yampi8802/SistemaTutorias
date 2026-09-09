@@ -9,7 +9,6 @@ title Sistema de Gestión de Tutorías - Modelo de Clases
 class Administrador {
     +Id : int
     +Nombre : string
-    +Correo : string
 }
 
 class Estudiante {
@@ -21,7 +20,7 @@ class Estudiante {
 class Docente {
     +Id : int
     +Nombre : string
-    +Correo : string
+    +Especialidad : string
 }
 
 class Tutoria {
@@ -47,7 +46,6 @@ class Reserva {
     +Estado : string
 }
 
-
 ' =========================
 ' NOTIFICACIONES
 ' =========================
@@ -62,7 +60,6 @@ class Notificador {
 
 Notificador ..|> INotificador
 
-
 ' =========================
 ' SERVICIOS
 ' =========================
@@ -75,7 +72,6 @@ class ServicioReservas {
 
 ServicioReservas --> Reserva
 ServicioReservas --> INotificador
-
 
 ' =========================
 ' FACTORY METHOD
@@ -139,7 +135,6 @@ SmsCreator --> NotificacionSMS : crea
 WhatsAppCreator --> NotificacionWhatsApp : crea
 TelegramCreator --> NotificacionTelegram : crea
 
-
 ' =========================
 ' BUILDER
 ' =========================
@@ -166,7 +161,6 @@ ReservaBuilder ..> Docente
 ReservaBuilder ..> Tutoria
 ReservaBuilder ..> HorarioTutoria
 
-
 ' =========================
 ' ADAPTER
 ' =========================
@@ -176,18 +170,17 @@ interface Videoconferencia {
 }
 
 class ProveedorZoom {
-    +IniciarReunion(titulo : string) : string
+    +IniciarReunionZoom(temaReunion : string) : string
 }
 
 class ZoomAdapter {
-    -_proveedor : ProveedorZoom
-    +ZoomAdapter(proveedor : ProveedorZoom)
+    -_proveedorZoom : ProveedorZoom
+    +ZoomAdapter(proveedorZoom : ProveedorZoom)
     +CrearReunion(titulo : string) : string
 }
 
 ZoomAdapter ..|> Videoconferencia
 ZoomAdapter --> ProveedorZoom : adapta
-
 
 ' =========================
 ' FACADE
@@ -203,7 +196,6 @@ class TutoriasFacade {
 TutoriasFacade --> ServicioReservas : coordina
 TutoriasFacade --> Videoconferencia : coordina
 TutoriasFacade --> Reserva : utiliza
-
 
 ' =========================
 ' RELACIONES DEL DOMINIO
